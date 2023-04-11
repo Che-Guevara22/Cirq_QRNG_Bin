@@ -1,0 +1,44 @@
+import cirq
+import numpy
+
+# Задаём количество генерируемых чисел
+n = 10
+
+# Устанавливаем диапазон генерируемых чисел [low; high]
+low = 0
+high = 1024
+
+# Определяем количество кубитов
+qubits_required = int(numpy.ceil(numpy.log2(high - low)))
+print("Количество кубитов: ", qubits_required)
+
+# Вспомогательная функция для вывода
+def bitstr(bits):
+	return ''.join('1' if e else '0' for e in bits)
+
+# Инициализация кубитов и схемы
+qreg = [cirq.LineQubit(x) for x in range(n)]
+circ = cirq.Circuit()
+
+# Добавляем в схему вентили Адамара и измерения
+for x in range(qubits_required):
+	circ.append([cirq.H(qreg[x]), cirq.measure(qreg[x])])
+
+# Вывод схемы в консоль
+print(circ)
+
+# Моделирование схемы
+sim = cirq.Simulator()
+
+# Генерация n случайных чисел в интервале [0; 1024]
+num_gen = 0
+output = []
+
+while num_gen <= n :
+	res = sim.run(circ,repetitions=1)
+	bits = bitstr(res.measurements.values())
+	output.append(int(bits, 2))
+	num_gen +=1
+
+# Вывод последовательности чисел
+print(output)

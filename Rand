@@ -1,0 +1,10 @@
+import cirq
+import numpy
+
+qubit = cirq.GridQubit(0, 0)
+
+circuit = cirq.Circuit([cirq.H(qubit), cirq.measure(qubit)])
+
+simulator = cirq.Simulator()
+result = simulator.run(circuit, repetitions=1000000)
+print(result)
